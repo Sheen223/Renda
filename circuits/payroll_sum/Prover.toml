@@ -1,0 +1,4 @@
+salaries = [8400, 6850, 7200, 7900]
+public_total = 30350
+batch_nonce = "20260630"
+employer_commitment = "123456789"

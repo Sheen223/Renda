@@ -1,0 +1,8 @@
+{
+  "name": "renda-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@noir-lang/noir_wasm": "^0.32.0"
+  }
+}

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renda — Confidential Payroll</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- We will rely purely on the native Freighter extension injection instead of the CDN script -->
+</head>
+<body>
+
+<div class="app-container">
+  <!-- SIDEBAR (WARM LIGHT) -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-layer-group"></i> Renda <span>Payroll</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; max-height: 50vh;">
+      <div class="subtitle-nav">Your Projects</div>
+      <div id="projectList" style="overflow-y: auto; margin-bottom: 16px;">
+        <!-- Projects rendered via JS -->
+      </div>
+    </div>
+      
+    <div style="margin-top: 8px;">
+      <button class="btn btn-ghost" id="newProjectBtn" style="justify-content: center; width: 100%; border: 1px dashed var(--line-medium); margin-bottom: 12px;">
+        <i class="fa-solid fa-plus"></i> New Project
+      </button>
+
+      <!-- DELETE PROJECT -->
+      <button class="btn btn-danger" id="deleteProjectBtn" style="justify-content: center; width: 100%;">
+        <i class="fa-solid fa-trash"></i> Delete Project
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <!-- TOP BAR -->
+    <div class="flex-between" style="margin-bottom: 32px;">
+      <div>
+        <h1 id="headerProjectName">Web3 Office</h1>
+        <div class="subtitle-dark"><i class="fa-solid fa-link" style="color:var(--amber);margin-right:6px"></i> Protocol 26 (Stellar Testnet)</div>
+      </div>
+      <div>
+        <button class="wallet-btn" id="connectWalletBtn" style="margin: 0;">
+          <i class="fa-solid fa-wallet"></i>
+          <span id="walletText">Connect Freighter</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS NAV -->
+    <div class="tabs-nav">
+      <div class="tab-btn active" data-tab="dashboard">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+      </div>
+      <div class="tab-btn" data-tab="builder">
+        <i class="fa-solid fa-users-gear"></i> Roster Builder
+      </div>
+      <div class="tab-btn" data-tab="zk">
+        <i class="fa-solid fa-shield-halved"></i> ZK & Distribute
+      </div>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="tab-dashboard" class="page active">
+      <div class="flex-between" style="margin-bottom: 16px;">
+        <h3 style="font-family:var(--font-sans);font-size:18px;">Overview</h3>
+        <!-- PRIVACY TOGGLE IS HERE NOW -->
+        <button class="btn" id="privacyToggleDash">
+          <i class="fa-solid fa-eye-slash" id="privacyIconDash"></i> <span id="privacyTextDash">Privacy On</span>
+        </button>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3><i class="fa-solid fa-money-bill-wave" style="color:var(--emerald);margin-right:8px"></i> Total Payroll</h3>
+          <div style="font-size:48px;font-weight:800;margin-top:16px;font-family:var(--font-serif);letter-spacing:-0.02em;">
+            <span class="blur-target" id="dashTotal">$0.00</span>
+          </div>
+          <div class="subtitle-dark" style="margin-top:8px">USDC on Stellar Testnet</div>
+          
+          <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+            <div class="badge badge-green"><i class="fa-solid fa-check"></i> Roster Ready</div>
+            <div class="badge badge-amber"><i class="fa-solid fa-shield-halved"></i> ZK Private</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Quick Roster</h3>
+          <div class="subtitle-dark" style="margin-top:8px"><span id="dashEmpCount">0</span> Employees</div>
+          <div style="margin-top: 16px;">
+            <table class="table">
+               <thead>
+                 <tr><th>Employee</th><th>Address</th><th style="text-align:right">Amount</th></tr>
+               </thead>
+               <tbody id="dashboardTbody">
+                 <!-- Rendered via JS -->
+               </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW ANALYTICS SECTION -->
+      <div style="margin-top: 24px;">
+        <h3 style="font-family:var(--font-sans);font-size:18px;margin-bottom:16px;">Payroll Analytics</h3>
+        <div class="grid-2">
+          <div class="panel" style="display:flex; flex-direction:column; justify-content:flex-end; height: 250px; position:relative;">
+            <div style="position:absolute; top:24px; left:24px;">
+              <h4 style="margin:0; font-size:16px;">Monthly Distribution</h4>
+              <div class="subtitle-dark" style="font-size:12px; margin-top:4px;">Past 6 months (USDC)</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:16px; height: 120px; border-bottom: 1px solid var(--border); padding-bottom:8px;">
+              <div style="flex:1; background:var(--primary); opacity:0.6; height: 40%; border-radius:4px 4px 0 0;"></div>
+              <div style="flex:1; background:var(--primary); opacity:0.7; height: 60%; border-radius:4px 4px 0 0;"></div>
+              <div style="flex:1; background:var(--primary); opacity:0.5; height: 45%; border-radius:4px 4px 0 0;"></div>
+              <div style="flex:1; background:var(--primary); opacity:0.8; height: 80%; border-radius:4px 4px 0 0;"></div>
+              <div style="flex:1; background:var(--primary); opacity:0.9; height: 95%; border-radius:4px 4px 0 0;"></div>
+              <div style="flex:1; background:var(--primary); height: 100%; border-radius:4px 4px 0 0;"></div>
+            </div>
+            <div style="display:flex; gap:16px; margin-top:8px; font-size:11px; color:var(--muted-dark); text-align:center;">
+              <div style="flex:1;">Jan</div>
+              <div style="flex:1;">Feb</div>
+              <div style="flex:1;">Mar</div>
+              <div style="flex:1;">Apr</div>
+              <div style="flex:1;">May</div>
+              <div style="flex:1;">Jun</div>
+            </div>
+          </div>
+          
+          <div class="panel">
+            <h4 style="margin:0; font-size:16px; margin-bottom:16px;">Recent Activity</h4>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div style="display:flex; gap:12px; align-items:center;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--emerald-light); color:var(--emerald); display:flex; align-items:center; justify-content:center;">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                  <div style="font-size:14px; font-weight:600;">ZK Rollup Executed</div>
+                  <div style="font-size:12px; color:var(--muted-dark);">To Escrow GA7N...BR5AQ • Just now</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:center;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--amber-light); color:var(--amber); display:flex; align-items:center; justify-content:center;">
+                  <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <div>
+                  <div style="font-size:14px; font-weight:600;">Roster Updated</div>
+                  <div style="font-size:12px; color:var(--muted-dark);">Added Charlie • 2 hours ago</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:center;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center;">
+                  <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div>
+                  <div style="font-size:14px; font-weight:600;">Contract Deployed</div>
+                  <div style="font-size:12px; color:var(--muted-dark);">Escrow Initialized • 1 day ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUILDER TAB -->
+    <div id="tab-builder" class="page">
+      <div class="flex-between" style="margin-bottom: 24px;">
+        <div>
+          <h3>Advanced Roster Builder</h3>
+          <div class="subtitle-dark" style="margin:4px 0 0 0">Organize employees into subsections. Values are public here.</div>
+        </div>
+        <button class="btn btn-primary" id="addGroupBtn"><i class="fa-solid fa-folder-plus"></i> New Group</button>
+      </div>
+      
+      <div id="builderGroupsContainer">
+        <!-- Groups rendered via JS -->
+      </div>
+    </div>
+
+    <!-- ZK & DISTRIBUTE TAB -->
+    <div id="tab-zk" class="page">
+      <div class="flex-between" style="margin-bottom: 16px;">
+        <h3 style="font-family:var(--font-sans);font-size:18px;">Execute Protocol</h3>
+      </div>
+
+      <div class="grid-2">
+        <!-- Flow Control -->
+        <div class="panel">
+          <h3><i class="fa-solid fa-paper-plane" style="color:var(--amber);margin-right:8px"></i> Distribution Flow</h3>
+          <div class="subtitle-dark" style="margin:4px 0 24px 0">Generate the ZK proof locally, then distribute on-chain.</div>
+          
+          <div class="input-group">
+            <label>1. Connect Wallet</label>
+            <div id="flowWalletStatus" class="badge badge-amber" style="width:fit-content;">Not Connected</div>
+          </div>
+
+          <div class="input-group mt-4">
+            <label>2. Generate ZK Proof (Noir)</label>
+            <button class="btn" id="generateProofBtn" style="justify-content:center">
+              <i class="fa-solid fa-microchip"></i> Generate Proof
+            </button>
+          </div>
+
+          <div class="input-group mt-4">
+            <label>3. Distribute on Stellar</label>
+            <button class="btn btn-primary" id="distributeBtn" style="justify-content:center" disabled>
+              <i class="fa-solid fa-bolt"></i> Distribute Payroll
+            </button>
+          </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="panel zk-terminal" id="zkTerminal">
+          <div style="margin-bottom:16px;color:var(--muted-dark)">> System ready. Waiting for input...</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL: New Project -->
+<div class="modal-overlay" id="newProjectModal">
+  <div class="modal-content">
+    <h3>New Payroll Project</h3>
+    <div class="subtitle-dark" style="margin:8px 0 24px 0">Create a new, isolated roster workspace.</div>
+    
+    <div class="input-group">
+      <label>Project Name</label>
+      <input type="text" id="newProjectName" placeholder="e.g. Snack Business..." />
+    </div>
+
+    <div class="flex-between mt-4">
+      <button class="btn btn-ghost" id="cancelProjectBtn">Cancel</button>
+      <button class="btn btn-primary" id="confirmProjectBtn">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT LOGIC -->
+<script type="module" src="/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renda - Confidential Payroll on Stellar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+  <style>
+    /* Renda Design Tokens */
+    :root {
+      --bg-main: #F9F8F6;
+      --bg-card: #FFFFFF;
+      --ink-dark: #1A1814;
+      --ink-medium: #4A463F;
+      --muted-dark: #7A756D;
+      --line-light: rgba(0, 0, 0, 0.08);
+      --line-medium: rgba(0, 0, 0, 0.15);
+      --amber: #D35400;
+      --amber-hover: #A04000;
+      --amber-light: rgba(211, 84, 0, 0.1);
+      --emerald: #27AE60;
+      
+      --radius: 16px;
+      --font-sans: 'Montserrat', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-sans);
+      color: var(--ink-dark);
+      background: var(--bg-main);
+      overflow-x: hidden;
+    }
+
+    /* Live CSS Animations */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 0 0 rgba(211, 84, 0, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(211, 84, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(211, 84, 0, 0); }
+    }
+    
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 48px;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .brand {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--amber);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .brand span {
+      color: var(--ink-dark);
+      font-weight: 400;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .nav-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--line-medium);
+      color: var(--ink-dark);
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .nav-btn:hover {
+      background: var(--ink-dark);
+      color: white;
+      border-color: var(--ink-dark);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 48px 48px 48px;
+      position: relative;
+    }
+
+    .hero-bg-blob {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(211,84,0,0.15) 0%, rgba(249,248,246,0) 70%);
+      top: -100px;
+      right: -100px;
+      z-index: 0;
+      animation: float 10s ease-in-out infinite;
+    }
+
+    .hero-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      max-width: 1300px;
+      width: 100%;
+      z-index: 1;
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      font-family: var(--font-serif);
+      font-size: 58px;
+      line-height: 1.1;
+      font-weight: 800;
+      margin-bottom: 24px;
+      color: var(--ink-dark);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .hero-text h1 span {
+      color: var(--amber);
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-text h1 span::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 12px;
+      background: var(--amber-light);
+      bottom: 8px;
+      left: 0;
+      z-index: -1;
+    }
+
+    .hero-text p {
+      font-size: 20px;
+      color: var(--ink-medium);
+      line-height: 1.6;
+      margin-bottom: 40px;
+      max-width: 500px;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+      opacity: 0;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+      opacity: 0;
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      color: white;
+      padding: 18px 36px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(211, 84, 0, 0.3);
+      animation: pulse-glow 3s infinite;
+    }
+
+    .btn-primary:hover {
+      background: var(--amber-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(211, 84, 0, 0.4);
+    }
+
+    .hero-image {
+      position: relative;
+      animation: fadeUp 1s ease 0.3s forwards;
+      opacity: 0;
+    }
+
+    .hero-image img {
+      width: 100%;
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.1);
+      border: 1px solid var(--line-light);
+      animation: float 6s ease-in-out infinite;
+      object-fit: cover;
+      height: 600px;
+    }
+
+    /* Floating Badge on Image */
+    .floating-badge {
+      position: absolute;
+      bottom: -30px;
+      left: -30px;
+      background: var(--bg-card);
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--line-light);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: float 5s ease-in-out infinite reverse;
+    }
+
+    .badge-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(39, 174, 96, 0.1);
+      color: var(--emerald);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .badge-text h4 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .badge-text p {
+      font-size: 13px;
+      color: var(--muted-dark);
+      margin: 0;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 120px 48px;
+      background: var(--ink-dark);
+      color: white;
+    }
+
+    .features-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 80px auto;
+    }
+
+    .features-header h2 {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      color: white;
+      margin-bottom: 24px;
+    }
+    
+    .features-header p {
+      color: #A39E93;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 40px;
+      border-radius: var(--radius);
+      transition: all 0.4s ease;
+    }
+
+    .feature-card:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-10px);
+      border-color: rgba(211,84,0,0.5);
+    }
+
+    .feature-card i {
+      font-size: 32px;
+      color: var(--amber);
+      margin-bottom: 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 24px;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .feature-card p {
+      color: #A39E93;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      padding: 48px;
+      border-top: 1px solid var(--line-medium);
+      background: var(--bg-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1300px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid var(--line-medium);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-medium);
+    }
+
+    .footer-badge i {
+      color: var(--ink-dark);
+      font-size: 16px;
+    }
+
+    footer p {
+      font-size: 15px;
+      color: var(--ink-medium);
+      font-weight: 500;
+      margin: 0;
+    }
+
+    footer a {
+      color: var(--amber);
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    footer a:hover {
+      color: var(--amber-hover);
+    }
+    
+    .footer-bottom {
+      width: 100%;
+      max-width: 1300px;
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--line-light);
+      font-size: 13px;
+      color: var(--muted-dark);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-container { grid-template-columns: 1fr; text-align: center; }
+      .hero-text h1 { font-size: 56px; }
+      .hero-text p { margin: 0 auto 40px auto; }
+      .hero-cta { justify-content: center; }
+      .features-grid { grid-template-columns: 1fr; }
+      .floating-badge { left: 50%; transform: translateX(-50%); bottom: -40px; }
+    }
+    .flowchart-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      width: 100%;
+      animation: fadeUp 1s ease 0.3s forwards;
+      opacity: 0;
+    }
+
+    /* Connecting Lines */
+    .flow-line {
+      height: 2px;
+      background: rgba(211, 84, 0, 0.2);
+      flex: 1;
+      min-width: 40px;
+      position: relative;
+      margin: 0 16px;
+    }
+    .flow-line::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      background: var(--amber);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--amber);
+      animation: moveDot 3s linear infinite;
+    }
+
+    @keyframes moveDot {
+      0% { left: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
+    }
+
+    /* Company Payroll UI Mock */
+    .fc-company-ui {
+      background: var(--bg-card);
+      border: 1px solid var(--line-medium);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+      padding: 24px;
+      z-index: 2;
+      width: 220px;
+      border-top: 24px solid rgba(0,0,0,0.04);
+      position: relative;
+    }
+    .fc-company-ui::before {
+      content: '';
+      position: absolute;
+      top: -14px; left: 12px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.15);
+      box-shadow: 14px 0 0 rgba(0,0,0,0.15), 28px 0 0 rgba(0,0,0,0.15);
+    }
+    .fc-company-ui h4 { font-size: 16px; margin-bottom: 24px; color: var(--ink-dark); }
+    .fc-stat { margin-bottom: 16px; }
+    .fc-stat span { display: block; font-size: 11px; color: var(--muted-dark); text-transform: uppercase; margin-bottom: 4px;}
+    .fc-stat strong { font-size: 20px; color: var(--ink-dark); }
+    .fc-btn { background: var(--amber); color: white; border-radius: 6px; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; margin-top: 24px; display: block; }
+
+    /* Encrypted Cubes (Removed for spacing) */
+
+    /* Stellar Core */
+    .fc-core-container {
+      position: relative;
+      z-index: 2;
+    }
+    .fc-core {
+      width: 110px;
+      height: 110px;
+      background: var(--ink-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 8px rgba(26, 24, 20, 0.1), 0 0 0 16px rgba(26, 24, 20, 0.05);
+    }
+    .fc-core img {
+      width: 50px;
+      filter: brightness(0) invert(1);
+    }
+    .fc-core-text {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 200px;
+    }
+    .fc-core-text strong { display: block; color: var(--ink-dark); font-size: 15px; margin-bottom: 4px; }
+    .fc-core-text span { font-size: 11px; color: var(--muted-dark); }
+    
+    .fc-verify-badge {
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line-medium);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      white-space: nowrap;
+    }
+    .fc-verify-badge i { color: var(--emerald); font-size: 16px; }
+
+    /* Employee Column */
+    .fc-employee-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+    .fc-employee-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line-medium);
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 220px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .fc-emp-avatar {
+      width: 36px;
+      height: 36px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted-dark);
+    }
+    .fc-emp-details { flex: 1; }
+    .fc-emp-details span { display: block; font-size: 11px; color: var(--muted-dark); margin-bottom: 2px;}
+    .fc-emp-details strong { font-size: 14px; color: var(--ink-dark); }
+    .fc-emp-status {
+      width: 24px;
+      height: 24px;
+      background: rgba(39, 174, 96, 0.1);
+      color: var(--emerald);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .fc-emp-dots {
+      text-align: center;
+      color: var(--line-medium);
+      font-size: 20px;
+      line-height: 10px;
+      margin: 4px 0;
+    }
+    
+    @media (max-width: 1024px) {
+      .flowchart-container { flex-direction: column; text-align: center; }
+      .flowchart-diagram { flex-direction: column; gap: 64px; }
+      .flow-line { height: 64px; width: 2px; margin: 16px 0; }
+      .flow-line::after { left: -3px; top: 0; animation: moveDotVert 3s linear infinite; }
+      @keyframes moveDotVert { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="brand">
+      <i class="fa-solid fa-layer-group"></i> Renda <span>Payroll</span>
+    </a>
+    <a href="index.html" class="nav-btn">
+      Enter Dashboard <i class="fa-solid fa-arrow-right"></i>
+    </a>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero-bg-blob"></div>
+      
+      <div class="hero-container">
+        <div class="hero-text">
+          <h1>Zero-Knowledge <br><span>Payroll</span> on Stellar.</h1>
+          <p>Renda completely decouples payroll distribution from public verification. Pay your team in USDC natively on the Stellar Network without ever leaking individual salaries to the public.</p>
+          <div class="hero-cta">
+            <a href="index.html" class="btn-primary">
+              <i class="fa-solid fa-rocket"></i> Launch Application
+            </a>
+          </div>
+        </div>
+
+        <div class="flowchart-diagram">
+          
+          <div class="fc-company-ui">
+            <h4>Company Payroll</h4>
+            <div class="fc-stat">
+              <span>Total Payroll</span>
+              <strong>24,500 USDC</strong>
+            </div>
+            <div class="fc-stat">
+              <span>Employees</span>
+              <strong>32</strong>
+            </div>
+            <div class="fc-btn">Approve Payroll</div>
+          </div>
+
+          <div class="flow-line"></div>
+
+          <div class="fc-core-container">
+            <div class="fc-verify-badge">
+              <i class="fa-solid fa-shield-check"></i> ZK Verified
+            </div>
+            <div class="fc-core">
+              <img src="https://cryptologos.cc/logos/stellar-xlm-logo.png" alt="Stellar">
+            </div>
+            <div class="fc-core-text">
+              <strong>Stellar Network</strong>
+              <span>Fast • Secure • Low Cost</span>
+            </div>
+          </div>
+
+          <div class="flow-line"></div>
+
+          <div class="fc-employee-col">
+            <div class="fc-employee-card">
+              <div class="fc-emp-avatar"><i class="fa-solid fa-user"></i></div>
+              <div class="fc-emp-details">
+                <span>Employee 01</span>
+                <strong>1,250 USDC</strong>
+              </div>
+              <div class="fc-emp-status"><i class="fa-solid fa-check"></i></div>
+            </div>
+            
+            <div class="fc-employee-card">
+              <div class="fc-emp-avatar"><i class="fa-solid fa-user"></i></div>
+              <div class="fc-emp-details">
+                <span>Employee 02</span>
+                <strong>1,250 USDC</strong>
+              </div>
+              <div class="fc-emp-status"><i class="fa-solid fa-check"></i></div>
+            </div>
+
+            <div class="fc-emp-dots">⋮</div>
+
+            <div class="fc-employee-card">
+              <div class="fc-emp-avatar"><i class="fa-solid fa-user"></i></div>
+              <div class="fc-emp-details">
+                <span>Employee 32</span>
+                <strong>1,250 USDC</strong>
+              </div>
+              <div class="fc-emp-status"><i class="fa-solid fa-check"></i></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="features-header">
+        <h2>Web3 Infrastructure. <br>Web2 Elegance.</h2>
+        <p>We built Renda so that companies can adopt crypto payroll operations natively without sacrificing the privacy of their employees.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fa-solid fa-fingerprint"></i>
+          <h3>ZK Rollup Verification</h3>
+          <p>Generate a 2KB mathematical proof entirely in your browser. Auditors can verify the math on-chain without knowing who makes what.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fa-brands fa-stellar"></i>
+          <h3>Native ManageData</h3>
+          <p>By chaining Stellar ManageData operations atomically to your payment, the ledger becomes your immutable proof layer.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-money-bill-transfer"></i>
+          <h3>Dynamic Escrow</h3>
+          <p>Gross payroll is seamlessly deposited into a multi-sig escrow architecture, guaranteeing perfect atomic execution.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-left">
+        <div class="footer-badge">
+          <i class="fa-solid fa-rocket"></i> Hackathon Project
+        </div>
+        <div class="footer-badge" style="background: rgba(0,0,0,0.03);">
+          <img src="https://cryptologos.cc/logos/stellar-xlm-logo.png" style="width: 16px; height: 16px; filter: grayscale(100%) contrast(200%);" alt="Stellar"> Built on Stellar
+        </div>
+      </div>
+      
+      <p>Built by sheen — <a href="https://x.com/sandsk1n" target="_blank"><i class="fa-brands fa-x-twitter"></i> @sandsk1n</a></p>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Renda Protocol. All rights reserved. Zero-Knowledge proofs powered by Noir.
+    </div>
+  </footer>
+
+</body>
+</html>
