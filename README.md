@@ -31,7 +31,7 @@ Any auditor can inspect the Stellar ledger, extract the `ManageData` proof chunk
 ## 💻 Tech Stack
 - **Frontend Framework:** Vanilla JS + CSS Modules + Vite
 - **Zero-Knowledge Circuit:** Noir (by Aztec)
-- **Prover Backend:** Barretenberg WASM
+- **Prover Backend:** Barretenberg WASM *(Note: For the purposes of this hackathon submission, the heavy Barretenberg WASM execution is simulated locally using high-fidelity SHA-256 hashes. This prevents 'Out of Memory' crashes when running the Vite dev server on local hardware, while preserving the complete 1-to-1 architecture of the Stellar `ManageData` payload).*
 - **Blockchain Integration:** Stellar Horizon, Stellar SDK, Freighter Wallet
 
 ## ⚙️ Running Locally
